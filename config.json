@@ -1,0 +1,11 @@
+{
+  "marketcruise_url": "http://100.94.202.43:8001",
+  "market_interval_minutes": 60,
+  "phone_ip": "192.168.0.7",
+  "ports": {
+    "flask": 5000,
+    "llm": 3000,
+    "market": 3001,
+    "nginx": 8088
+  }
+}

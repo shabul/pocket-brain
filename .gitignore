@@ -1,0 +1,21 @@
+# Model weights — too large for git (download separately)
+*.gguf
+*.bin
+*.ggml
+
+# Node
+llm/node_modules/
+hub/node_modules/
+
+# Nginx runtime dirs (created on phone)
+nginx/logs/
+nginx/tmp/
+
+# Logs
+logs/
+
+# macOS
+.DS_Store
+
+# Internal dev notes (may contain credentials)
+CLAUDE.md

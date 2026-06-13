@@ -1,0 +1,13 @@
+{
+  "name": "pocket-server-llm",
+  "version": "1.0.0",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "chat": "node chat.js"
+  },
+  "dependencies": {
+    "node-llama-cpp": "^3.0.0"
+  }
+}
