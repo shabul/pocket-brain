@@ -1,222 +1,367 @@
-# Pocket Server — Android Phone as a 24/7 LLM API
+<div align="center">
 
-Running a free, public AI API from a Samsung Galaxy phone using Termux. No cloud. No monthly bill.
+# 🧠 Pocket Brain
+
+### Your old Android phone, reimagined as a 24/7 AI + Market Intelligence server
+
+[![Android](https://img.shields.io/badge/Android-Samsung_Galaxy_S20_FE-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/shabul/pocket-brain)
+[![Termux](https://img.shields.io/badge/Termux-No_Root-000000?style=for-the-badge&logo=gnu-bash&logoColor=white)](https://termux.dev)
+[![Node.js](https://img.shields.io/badge/Node.js-LLM_Server-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Python](https://img.shields.io/badge/Python-Flask_Hub-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://flask.palletsprojects.com)
+[![Nginx](https://img.shields.io/badge/Nginx-Reverse_Proxy-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org)
+[![Tailscale](https://img.shields.io/badge/Tailscale-Mesh_VPN-242424?style=for-the-badge&logo=tailscale&logoColor=white)](https://tailscale.com)
+
+<br/>
+
+> **No cloud. No GPU. No monthly bill.**
+> Just a phone that was collecting dust — now running Gemma 2B,
+> watching Indian markets 24/7, and serving it all over the public internet.
+
+<br/>
+
+![cost](https://img.shields.io/badge/Monthly_Cost-$0-brightgreen?style=flat-square)
+![model](https://img.shields.io/badge/Model-Gemma_2B_IT_Q4__K__M-blueviolet?style=flat-square)
+![speed](https://img.shields.io/badge/Inference-4--6_tok%2Fs-orange?style=flat-square)
+![arch](https://img.shields.io/badge/Arch-ARM64_aarch64-blue?style=flat-square)
+![ram](https://img.shields.io/badge/RAM-7.8_GB-informational?style=flat-square)
+
+</div>
 
 ---
 
-## What this is
-
-A repurposed Samsung Galaxy S20 FE running a full production-style web server stack entirely on-device via Termux. The phone serves a **Gemma 2B language model** over the public internet, accessible to anyone with the URL.
-
-**The phone is the server.**
-
----
-
-## Architecture
+## What's running on the phone
 
 ```
-Internet
-   │
-   ▼
-localhost.run SSH tunnel  (free public HTTPS URL)
-   │
-   ▼
-Nginx  :8080  (reverse proxy, handles SSE buffering)
-   │
-   ▼
-Node.js LLM Server  :3000  (node-llama-cpp + Gemma 2B GGUF)
-   │  streaming SSE tokens
-   ▼
-Browser / API client
-
-Flask app  :5000  (separate landing page / demo)
+┌─────────────────────────────────────────────────────────┐
+│              Samsung Galaxy S20 FE  (Termux)            │
+│                                                         │
+│  ┌─────────────────┐      ┌──────────────────────────┐  │
+│  │  Flask Hub :5000│      │   MarketCruise Bridge    │  │
+│  │  Dashboard UI   │      │   hub/market.js  :3001   │  │
+│  │  Premarket data │◄─────│   polls Mac via Tailscale│  │
+│  │  Stock analysis │      └──────────────────────────┘  │
+│  │  LLM link       │                  ▲                 │
+│  └────────┬────────┘                  │ Tailscale VPN   │
+│           │                           │ 100.94.x.x:8001 │
+│  ┌────────▼────────┐      ┌───────────┴──────────────┐  │
+│  │  Nginx   :8088  │      │  MarketCruise  (Mac)     │  │
+│  │  Reverse Proxy  │      │  LangGraph + Gemini      │  │
+│  │  /      → Flask │      │  4 AI agents             │  │
+│  │  /llm/  → LLM   │      │  NSE + Portfolio data    │  │
+│  │  /market/→ Hub  │      └──────────────────────────┘  │
+│  └────────┬────────┘                                    │
+│           │                                             │
+│  ┌────────▼────────┐                                    │
+│  │  Gemma 2B :3000 │                                    │
+│  │  node-llama-cpp │                                    │
+│  │  SSE streaming  │                                    │
+│  │  Chat UI        │                                    │
+│  └─────────────────┘                                    │
+└─────────────────────────────────────────────────────────┘
+         │
+         │  localhost.run SSH tunnel
+         ▼
+   https://XXXX.lhr.life   (public internet)
 ```
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| OS | Android (Samsung Galaxy S20 FE) |
-| Runtime environment | Termux (Linux userspace on Android, no root) |
-| LLM inference | `node-llama-cpp` v3 (llama.cpp bindings for Node.js) |
-| Model | Gemma 2B IT — Q4_K_M quantized, 1.6GB GGUF |
-| Web server | Node.js (raw `http` module) |
-| Reverse proxy | Nginx |
-| Landing page | Python Flask |
-| Public tunnel | localhost.run (SSH-based, no binary needed) |
-| Remote access | Tailscale (VPN mesh — no open ports required) |
-| Arch | ARM64 (aarch64), 6-core CPU, 7.8GB RAM |
+<table>
+<tr>
+<td><b>Layer</b></td>
+<td><b>Technology</b></td>
+<td><b>Why</b></td>
+</tr>
+<tr>
+<td>🤖 LLM Inference</td>
+<td><code>node-llama-cpp</code> v3 + Gemma 2B IT Q4_K_M</td>
+<td>Compiled from source for ARM64 — no pre-built binaries exist for Android</td>
+</tr>
+<tr>
+<td>📈 Market Intel</td>
+<td>MarketCruise (LangGraph + Gemini) via Tailscale</td>
+<td>4-agent AI system on Mac; phone bridges the data to the dashboard</td>
+</tr>
+<tr>
+<td>🌐 Web Server</td>
+<td>Node.js raw <code>http</code> module</td>
+<td>Zero dependencies, SSE streaming, embedded chat UI</td>
+</tr>
+<tr>
+<td>🔀 Proxy</td>
+<td>Nginx</td>
+<td>Routes all services under one port; <code>proxy_buffering off</code> for SSE</td>
+</tr>
+<tr>
+<td>🖥️ Dashboard</td>
+<td>Python Flask</td>
+<td>Hub page — premarket ticker, analysis, predictions, service health</td>
+</tr>
+<tr>
+<td>🌍 Public Tunnel</td>
+<td>localhost.run (SSH reverse tunnel)</td>
+<td>No binary, no DNS issues — just SSH. Cloudflared breaks on Android.</td>
+</tr>
+<tr>
+<td>🔒 Remote Access</td>
+<td>Tailscale</td>
+<td>Zero-config mesh VPN via Android app — Mac talks to phone from anywhere</td>
+</tr>
+<tr>
+<td>📱 Runtime</td>
+<td>Termux (ARM64, 6-core, 7.8GB RAM)</td>
+<td>Full Linux userspace on Android, no root required</td>
+</tr>
+</table>
 
 ---
 
-## What it does
+## Features
 
-### 1. LLM API with streaming (`/chat`)
+### 🤖 On-Device LLM — `GET /llm/`
 
-A `POST /chat` endpoint that streams model responses token-by-token using **Server-Sent Events (SSE)**. Any client can hit this like an API:
+A full streaming chat interface powered by **Gemma 2B** running entirely on the phone's CPU. No API key. No quota. No cost.
 
 ```bash
-curl -N -X POST https://XXXX.lhr.life/chat \
+# Hit it like any LLM API
+curl -N -X POST https://XXXX.lhr.life/llm/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Explain recursion simply"}'
 
-# Response streams as:
+# Streams token by token:
 # data: "Recursion"
 # data: " is"
-# data: " when..."
+# data: " when a function..."
 # data: [DONE]
 ```
 
-### 2. Chat web UI (`GET /`)
+- Token-by-token SSE streaming
+- Persistent context (never torn down — key gotcha on Android)
+- Serial request queue for concurrent users
+- `POST /llm/reset` to clear conversation history
+- Dark-mode chat UI, no build step, no React
 
-A full dark-mode chat interface served directly from the phone. No React, no build step — pure HTML/CSS/JS embedded in the Node.js server. Supports:
-- Token-streaming with typing cursor animation
-- Auto-resizing textarea
-- "New chat" button that resets the context (`POST /reset`)
-- Mobile-responsive layout
+---
 
-### 3. Flask landing page (`:5000`)
+### 📊 Market Intelligence Hub — `GET /`
 
-A separate Python Flask app with a glassmorphism landing page showing the server is live.
+The phone polls **[MarketCruise](https://github.com/shabul/MarketCruise)** — a multi-agent LangGraph system running on Mac — every hour via Tailscale. Results are cached locally so the dashboard works even if the Mac goes offline.
 
-### 4. Public internet access
+**What the dashboard shows:**
+| Section | Data |
+|---------|------|
+| 🌅 Premarket Strip | Nifty 50, Bank Nifty, India VIX, USD/INR, Crude, S&P500, Nasdaq, Nikkei |
+| 📝 Analysis | Latest MarketCruise run report (morning / midday / evening) |
+| 🎯 Today's Calls | Per-stock BUY / SELL / HOLD with confidence % and reasoning |
+| 🟢 Service Health | Live badges for LLM, MarketCruise, Flask |
 
-The phone has no public IP. Instead, an SSH reverse tunnel via `localhost.run` exposes the Nginx port publicly:
-
+**Trigger a run from the phone:**
 ```bash
-ssh -R 80:localhost:8080 localhost.run
-# → prints https://XXXX.lhr.life
+curl -X POST http://phone:8088/market/api/run/morning
+# → forwards to MarketCruise on Mac, returns run_id
 ```
-
-No ports opened on the router. No cloudflare. Just SSH.
 
 ---
 
 ## Performance
 
-- **Model load time**: ~20-30 seconds on first start
-- **Inference speed**: ~4-6 tokens/second
-- **Context window**: 4096 tokens
-- **RAM used by model**: ~1.8GB
-- **Threads**: 6 (all CPU cores, hardcoded — Android's `os.cpus()` returns `[]`)
+<table>
+<tr>
+<td align="center">⚡<br/><b>4–6 tok/s</b><br/><sub>Inference speed</sub></td>
+<td align="center">⏱️<br/><b>~25s</b><br/><sub>Model load time</sub></td>
+<td align="center">🧠<br/><b>4096</b><br/><sub>Context window</sub></td>
+<td align="center">💾<br/><b>1.8 GB</b><br/><sub>RAM for model</sub></td>
+<td align="center">🔧<br/><b>6 threads</b><br/><sub>All CPU cores</sub></td>
+<td align="center">💰<br/><b>$0 / mo</b><br/><sub>Running cost</sub></td>
+</tr>
+</table>
 
 ---
 
-## Key Engineering Challenges
+## Hard-won Android gotchas
 
-### 1. `node-llama-cpp` had to be compiled from source on ARM64
-Pre-built binaries don't exist for Android ARM64. The build took ~30 minutes using Termux's clang/cmake. `node_modules` must not be deleted.
+These aren't in any tutorial. Took real debugging to find.
 
-### 2. Persistent LLM context — never tear it down per request
-The biggest gotcha: creating a new `context.getSequence()` per HTTP request crashes or corrupts the model state on Android. Solution: one context, one sequence, one session — created at startup and reused forever. A serial queue handles concurrent requests.
+<details>
+<summary><b>1. node-llama-cpp must be compiled from source on ARM64</b></summary>
+
+No pre-built binaries exist for Android ARM64. The compilation takes ~30 minutes using Termux's `clang` and `cmake`. **Never delete `node_modules/`** — you don't want to wait 30 minutes again.
+
+```bash
+pkg install clang cmake make
+cd ~/server/llm && npm install  # go get a coffee
+```
+</details>
+
+<details>
+<summary><b>2. One persistent LLM context — never create per request</b></summary>
+
+Creating `context.getSequence()` per HTTP request corrupts model state on Android. The fix: one context, one session, forever — with a serial queue for concurrency.
 
 ```js
-// Wrong — destroys context per request
-app.post('/chat', async (req, res) => {
-  const seq = context.getSequence(); // ← CRASH on Android
+// WRONG — crashes on Android
+req.on('end', async () => {
+  const seq = context.getSequence(); // corrupts state
 });
 
-// Right — one persistent session, serial queue
+// RIGHT — one session at startup, serial queue
 const chatSession = new LlamaChatSession({ contextSequence: sequence });
-const queue = []; // one thing at a time
+const queue = [];  // drain one request at a time
 ```
+</details>
 
-### 3. `os.cpus()` returns `[]` on Android
-Node.js can't read `/proc/cpuinfo` in Termux's sandbox. Thread count hardcoded to 6.
+<details>
+<summary><b>3. os.cpus() returns [] on Android</b></summary>
 
-### 4. DNS broken for Go/Cloudflare binaries
-Android intercepts DNS at `[::1]:53` in a way that breaks Go's resolver. Cloudflared and similar tunnel clients fail. `localhost.run` uses pure SSH — no binary, no DNS issues.
+Node.js can't read `/proc/cpuinfo` inside Termux's sandbox. Thread count must be hardcoded (or set via env var):
 
-### 5. SSE streaming through Nginx
-Nginx buffers responses by default, which breaks SSE. Required:
+```js
+const THREADS = parseInt(process.env.THREADS ?? "6", 10);
+```
+</details>
+
+<details>
+<summary><b>4. DNS is broken for Go binaries — cloudflared won't work</b></summary>
+
+Android intercepts DNS at `[::1]:53` in a way that breaks Go's net resolver. Cloudflared, frp, and similar Go-based tunnels all fail silently. Solution: `localhost.run` uses pure SSH — no binary, no DNS lookup needed.
+
+```bash
+ssh -R 80:localhost:8088 localhost.run  # just works
+```
+</details>
+
+<details>
+<summary><b>5. Nginx buffers SSE by default — streaming breaks</b></summary>
+
 ```nginx
-proxy_buffering off;
-proxy_cache off;
-proxy_read_timeout 300s;  # LLM can be slow
+location /llm/ {
+    proxy_buffering off;   # required for SSE
+    proxy_cache off;
+    proxy_read_timeout 300s;
+}
 ```
+</details>
 
-### 6. Kill by port, never `pkill -f`
-`pkill -f node` also kills `sshd` on Android — you lose SSH access. Always kill by port:
+<details>
+<summary><b>6. Never use pkill -f — it kills sshd</b></summary>
+
+`pkill -f node` matches everything with "node" in the process args, including `sshd` on some Android builds. You'll lose SSH access mid-session.
+
 ```bash
-fuser -k 3000/tcp
+fuser -k 3000/tcp   # safe — kills only what's on the port
 ```
+</details>
 
 ---
 
-## File Structure
+## Project Structure
 
 ```
-pocket-server/
-├── start.sh            # One-command startup for all services
-├── flask/
-│   └── app.py          # Landing page (port 5000)
-├── llm/
-│   ├── server.js       # LLM API + chat UI (port 3000, SSE streaming)
-│   ├── chat.js         # CLI chat for terminal testing
+pocket-brain/
+│
+├── 📄 config.json          # Ports, MarketCruise URL, poll interval
+├── 🚀 start.sh             # One command — boots all services on the phone
+│
+├── 🖥️  flask/
+│   └── app.py              # Hub dashboard (premarket, analysis, predictions)
+│
+├── 🤖 llm/
+│   ├── server.js           # Gemma 2B HTTP server — SSE streaming + chat UI
+│   ├── chat.js             # Terminal CLI chat (for testing)
 │   └── package.json
-└── nginx/
-    └── nginx.conf      # Reverse proxy: 8080 → 3000, SSE-safe
+│
+├── 📊 hub/
+│   └── market.js           # MarketCruise bridge — polls Mac, caches, serves API
+│
+└── 🔀 nginx/
+    └── nginx.conf          # Routes: / → Flask | /llm/ → Gemma | /market/ → Hub
 ```
-
-On the phone, everything lives under `~/server/` with a `logs/` directory for each service.
 
 ---
 
-## Running it
+## Quick Start
 
-### On the phone (after every reboot)
+### Prerequisites — on the phone
+
 ```bash
+# Install Termux packages
+pkg install python nodejs npm nginx openssh clang cmake make
+
+# Python deps
+pip install flask
+
+# Compile LLM bindings (~30 min, do this once)
+cd ~/server/llm && npm install
+
+# Download Gemma 2B IT Q4_K_M (~1.6GB)
+# Place at: ~/server/llm/gemma.gguf
+
+# SSH key for the public tunnel
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
+```
+
+### Boot everything
+
+```bash
+# Run after every phone reboot
 sshd && bash ~/server/start.sh
 ```
 
-### From Mac (via Tailscale — works from anywhere)
-```bash
-sshpass -p 'YOUR_PASSWORD' ssh -p 8022 <tailscale-ip>
+```
+[1/5] Stopping any existing services...
+[2/5] Starting Flask hub dashboard (port 5000)...
+[3/5] Starting Nginx (port 8088)...
+[4/5] Starting LLM server (port 3000)...
+  Waiting for model to load (~30s)...
+  Server: http://0.0.0.0:3000
+[5/5] Starting market watcher (port 3001)...
+
+=== All services running ===
+Hub:    http://192.168.0.7:8088
+LLM:    http://192.168.0.7:8088/llm/
+Market: http://192.168.0.7:8088/market/api/latest
+Public: https://XXXX.lhr.life
 ```
 
-### Get the public URL
-```bash
-grep -o 'https://.*\.lhr\.life' ~/server/logs/tunnel.log
-```
-
----
-
-## Setup from scratch
+### SSH in from anywhere
 
 ```bash
-# 1. Install packages
-pkg install python nodejs npm nginx openssh clang cmake make
-
-# 2. Install Python deps
-pip install flask
-
-# 3. Install Node deps + compile llama.cpp (takes ~30 min)
-cd ~/server/llm && npm install
-
-# 4. Download model (Gemma 2B IT Q4_K_M, ~1.6GB)
-# Place as ~/server/llm/gemma.gguf
-
-# 5. Generate SSH key for localhost.run tunnel
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
-
-# 6. Start everything
-bash ~/server/start.sh
+# Via Tailscale (works from any network)
+ssh -p 8022 <phone-tailscale-ip>
 ```
 
 ---
 
-## What's next
+## Related
 
-- [ ] `termux-boot` — auto-start on phone reboot
-- [ ] Permanent localhost.run subdomain (free with account login)
-- [ ] Try Gemma 3 1B (faster, same quality for short tasks)
-- [ ] `proot-distro install ubuntu` for a full Linux environment
-- [ ] Expose Flask + LLM behind a single Nginx vhost
+[![MarketCruise](https://img.shields.io/badge/GitHub-MarketCruise-181717?style=for-the-badge&logo=github)](https://github.com/shabul/MarketCruise)
+
+**MarketCruise** — the multi-agent LangGraph system that runs on Mac and powers this phone's market intelligence. 4 AI agents (Orchestrator, News, Technical, Portfolio) + ChromaDB memory + Gemini models + live NSE data.
 
 ---
 
-## Built with
+## Roadmap
 
-This project was architected and debugged with [Claude Fable 5](https://claude.ai) (Max effort mode via Claude Code). The entire server stack — from the node-llama-cpp integration to the SSE streaming pipeline and nginx config — was designed and iterated on through an agentic coding session directly over SSH into the Android device. Fable 5's Max effort mode was key to catching Android-specific gotchas (broken `os.cpus()`, DNS issues, persistent context requirements) that aren't documented anywhere.
+- [ ] `termux-boot` — auto-start all services on phone reboot
+- [ ] Permanent localhost.run subdomain
+- [ ] Swap to Gemma 3 4B multimodal for vision capabilities
+- [ ] `proot-distro install ubuntu` for Docker-like environment
+- [ ] Push market alerts to Telegram when MarketCruise flags a signal
+
+---
+
+<div align="center">
+
+**Built with [Claude Fable 5](https://claude.ai) — Max Effort mode via Claude Code**
+
+*The entire stack was designed, debugged, and iterated through an agentic coding session
+directly over SSH into the Android device. Fable 5's Max effort mode surfaced every
+Android-specific gotcha listed above — none of them are in any tutorial.*
+
+<br/>
+
+[![Star this repo](https://img.shields.io/github/stars/shabul/pocket-brain?style=social)](https://github.com/shabul/pocket-brain)
+
+</div>
