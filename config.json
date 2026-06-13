@@ -7,5 +7,13 @@
     "llm": 3000,
     "market": 3001,
     "nginx": 8088
+  },
+  "whatsapp": {
+    "phone": "+91XXXXXXXXXX",
+    "callmebot_apikey": "YOUR_CALLMEBOT_KEY",
+    "alerts": {
+      "morning": true,
+      "evening": true
+    }
   }
 }
